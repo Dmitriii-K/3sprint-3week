@@ -11,7 +11,7 @@ export class CommentQueryRepository {
             return null;
         };
         return CommentQueryRepository.mapComment(comment);
-    };
+    }
     static mapComment (comment: WithId<CommentDBType>): CommentViewModel {
         return {
             id: comment._id.toString(),
@@ -19,5 +19,5 @@ export class CommentQueryRepository {
             createdAt: comment.createdAt,
             commentatorInfo: comment.commentatorInfo,
         };
-    };
+    }
 }

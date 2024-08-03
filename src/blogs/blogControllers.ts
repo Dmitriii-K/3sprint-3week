@@ -29,7 +29,7 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static createPostForBlog = async (
         req: Request<BlgId, {}, BlogPostInputModel>,
         res: Response<PostViewModel>
@@ -51,7 +51,7 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static getAllBlogs = async (
         req: Request<{}, {}, {}, TypeBlogHalper>,
         res: Response<PaginatorBlogViewModel>
@@ -64,7 +64,7 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static getBlogById = async (req: Request, res: Response) => {
         try {
             const blogResult = await BlogQueryRepository.getBlogById(req.params.id)
@@ -77,7 +77,7 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static getPostForBlog = async (
         req: Request<BlgId, {}, {}, TypePostForBlogHalper>,
         res: Response<PaginatorPostViewModel>
@@ -94,7 +94,7 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static updateBlog = async (
         req: Request<BlgId, {}, BlogInputModel>,
         res: Response
@@ -114,7 +114,7 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static deleteBlog = async (
         req: Request,
         res: Response
@@ -130,5 +130,5 @@ export class BlogController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
 }

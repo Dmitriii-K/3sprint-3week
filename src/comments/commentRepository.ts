@@ -8,7 +8,7 @@ export class CommetRepository {
         const updateComment = await CommentModel.updateOne({ _id: mongoId },{$set: {content}});
         return updateComment.modifiedCount === 1
         
-    };
+    }
     static async findUserByComment (id: string) {
         const mongoId = new ObjectId(id);
         return CommentModel.findOne({_id: mongoId});

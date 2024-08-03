@@ -17,7 +17,7 @@ export class PostService {
             createdAt: createDate,
         };
         return PostRepository.insertPost(newPost);
-        }
+    }
     static async createCommentByPost (paramId: string, data: CommentInputModel, user: WithId<UserDBModel>) {
         const post = await PostRepository.findPostById(paramId);
         const createDate = new Date().toISOString();

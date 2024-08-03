@@ -36,8 +36,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static authPasswordRecovery = async (req: Request<{}, {}, RegistrationEmailResending>, res: Response) => {
     try {
     await authService.passwordRecovery(req.body.email);
@@ -46,8 +45,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static authNewPassword = async (req: Request<{}, {}, NewPasswordRecoveryInputModel>, res: Response) => {
     try {
       const newPassword = await authService.newPassword(req.body);
@@ -61,7 +59,6 @@ export class AuthController {
       res.sendStatus(505);
     }
   }
-
   static authRefreshToken = async (req: Request, res: Response) => {
     try {
       const device = await AuthRepository.findSessionFromDeviceId(req.deviceId);
@@ -78,8 +75,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static authRegistration = async (req:Request<{}, {}, UserInputModel>, res: Response) => {
     try {
       const registrationResult = await authService.registerUser(req.body);
@@ -93,8 +89,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static authRegistrationConfirmation = async (req: Request<{}, {}, RegistrationConfirmationCodeModel>, res: Response) => {
     try {
       const result = await authService.confirmEmail(req.body.code);
@@ -108,8 +103,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static authRegistrationEmailResending = async (req: Request<{}, {}, RegistrationEmailResending>, res: Response) => {
     try {
       const emailResending = await authService.resendEmail(req.body.email);
@@ -123,8 +117,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static authLogout = async (req: Request, res: Response) => {
     try {
       const device = await AuthRepository.findSessionFromDeviceId(req.deviceId)
@@ -141,8 +134,7 @@ export class AuthController {
       console.log(error);
       res.sendStatus(505);
     }
-  };
-
+  }
   static getUserInform = async (req: Request, res: Response<MeViewModel>) => {
     try {
         const {login, email, _id} = req.user
@@ -152,7 +144,7 @@ export class AuthController {
     } catch (error) {
         console.log(error);
     }
-  };
+  }
 };
 
 

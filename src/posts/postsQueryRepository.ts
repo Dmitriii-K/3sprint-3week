@@ -23,7 +23,7 @@ export class PostQueryRepository {
             items: items.map(PostQueryRepository.mapPost),
         };
         return posts
-    };
+    }
     static async findPostById (id: string) {
         const mongoId = new ObjectId(id);
         const post = await PostModel.findOne({_id: mongoId});
@@ -31,7 +31,7 @@ export class PostQueryRepository {
             return null;
         };
         return PostQueryRepository.mapPost(post);
-    };
+    }
     static async findCommentById (id: string) {
         const mongoId = new ObjectId(id);
         const comment = await CommentModel.findOne({_id: mongoId});
@@ -39,7 +39,7 @@ export class PostQueryRepository {
             return null;
         };
         return PostQueryRepository.mapComment(comment);
-    };
+    }
     static async findCommentByPost (helper: TypePostHalper, id: string) {
         const queryParams = commentsPagination(helper);
             const items: WithId<CommentDBType>[] = await CommentModel
@@ -57,7 +57,7 @@ export class PostQueryRepository {
             items: items.map(PostQueryRepository.mapComment),
             };
             return comments
-    };
+    }
     static mapPost (post: WithId<PostDbType>): PostViewModel {
         return {
         id: post._id.toString(),
@@ -68,7 +68,7 @@ export class PostQueryRepository {
         blogName: post.blogName,
         createdAt: post.createdAt,
         };
-    };
+    }
     static mapComment (comment: WithId<CommentDBType>): CommentViewModel {
         return {
             id: comment._id.toString(),
@@ -76,5 +76,5 @@ export class PostQueryRepository {
             createdAt: comment.createdAt,
             commentatorInfo: comment.commentatorInfo,
         };
-    };
+    }
 }

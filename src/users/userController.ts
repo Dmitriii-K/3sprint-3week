@@ -27,7 +27,7 @@ export class UserController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static deleteUser = async (req: Request, res: Response) => {
         try {
         const deleteBlog = await UserRepository.deleteUser(req.params.id);
@@ -41,7 +41,7 @@ export class UserController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static getUsers = async (
         req: Request<{}, {}, {}, TypeUserPagination>,
         res: Response<PaginatorUserViewModel>
@@ -54,5 +54,5 @@ export class UserController {
         console.log(e);
         return res.sendStatus(505);
         }
-    };
+    }
 }

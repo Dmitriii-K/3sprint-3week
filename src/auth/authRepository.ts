@@ -58,7 +58,6 @@ export class AuthRepository {
         const result = await ApiModel.create({ip: ip, URL: url, date: currentDate})
         return result._id.toString()
     }
-
     static async countingNumberRequests (ip: string, url: string, tenSecondsAgo: Date) {
         const filterDocument = {
             ip: ip,

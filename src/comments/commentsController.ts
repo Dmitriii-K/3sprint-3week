@@ -16,7 +16,7 @@ export class CommentsController {
             console.log(error);
             return res.sendStatus(505);
         }
-    };
+    }
     static updateComment = async (req:Request< ComId, {}, CommentInputModel>, res:Response) => {
         try {
             const findUser = await CommentService.findUserByComment(req.params.id)
@@ -37,7 +37,7 @@ export class CommentsController {
             console.log(error);
             res.sendStatus(505)
         }
-    };
+    }
     static deleteComment = async (req: Request, res: Response) => {
         try {
         const user = await CommentService.findUserByComment(req.params.id)

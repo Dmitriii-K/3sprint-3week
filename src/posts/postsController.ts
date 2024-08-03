@@ -29,7 +29,7 @@ export class PostController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static createCommentByPostId = async (req:Request<PstId,{}, CommentInputModel>, res:Response<CommentDBType>) => {
         try {
             const createResult = await PostService.createCommentByPost(req.params.id, req.body, req.user)
@@ -44,7 +44,7 @@ export class PostController {
             console.log(error);
             res.sendStatus(505);
         }
-    };
+    }
     static getPosts = async (
         req: Request<{}, {}, {}, TypePostHalper>,
         res: Response<PaginatorPostViewModel>
@@ -56,7 +56,7 @@ export class PostController {
         console.log(e);
         res.sendStatus(505);
     }
-    };
+    }
     static getPostById = async (req: Request, res: Response) => {
         try {
             const postResult = await PostQueryRepository.findPostById(req.params.id)
@@ -70,7 +70,7 @@ export class PostController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static getCommentByPost = async (req:Request<PstId, {},{},TypePostHalper>, res:Response<PaginatorCommentViewModelDB>) => {
         try {
             const comments = await PostQueryRepository.findCommentByPost(req.query, req.params.id)
@@ -84,7 +84,7 @@ export class PostController {
             console.log(error);
             res.sendStatus(505);
         }
-    };
+    }
     static updatePost = async (
         req: Request<PstId, {}, PostInputModel>,
         res: Response
@@ -103,7 +103,7 @@ export class PostController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
     static deletePost = async (
         req: Request,
         res: Response
@@ -120,5 +120,5 @@ export class PostController {
         console.log(error);
         res.sendStatus(505);
         }
-    };
+    }
 }

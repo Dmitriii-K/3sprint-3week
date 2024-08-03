@@ -12,7 +12,7 @@ export class UserQueryRepository {
             return null;
         };
         return UserQueryRepository.mapUser(user);
-    };
+    }
     static async findUserByMiddleware (id: string) {
         const mongoId = new ObjectId(id);
         const user = await UserModel.findOne({_id: mongoId});
@@ -20,7 +20,7 @@ export class UserQueryRepository {
             return null;
         };
         return user
-    };
+    }
     static async findUsers(sortData: TypeUserPagination) {
         const queryParams = userPagination(sortData);
         const searchEmail = sortData.searchEmailTerm
@@ -46,7 +46,7 @@ export class UserQueryRepository {
             items: items.map(UserQueryRepository.mapUser),
         };
         return newUser;
-    };
+    }
     static mapUser (user: WithId<UserDBModel>): UserViewModel {
         return {
             id: user._id.toString(),
@@ -54,5 +54,5 @@ export class UserQueryRepository {
             email: user.email,
             createdAt: user.createdAt,
         };
-    };
+    }
 }

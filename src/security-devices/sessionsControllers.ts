@@ -18,8 +18,7 @@ export class SessionsControllers {
             console.log(error);
             res.sendStatus(505);
         }
-    };
-
+    }
     static deleteSessionsById = async (req: Request, res: Response) => {
         try {
             const findSession = await SessionsService.findUserByDeviceId(req.params.id);
@@ -43,8 +42,7 @@ export class SessionsControllers {
             console.log(error);
             res.sendStatus(505);
         }
-    };
-
+    }
     static getAllSessions = async (req: Request, res: Response<DeviceViewModel[]>) => {
         try {
             const sessions = await SessionsQueryRepository.findSessions(req.user._id);
