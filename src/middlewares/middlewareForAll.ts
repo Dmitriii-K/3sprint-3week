@@ -16,6 +16,7 @@ const urlPattern =
 const imailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const loginPattern = /^[a-zA-Z0-9_-]*$/;
 const passwordRecoveryPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+const enumValues = ['None', 'Like', 'Dislike'];
 
 export const registrationEmail = [
   body("email")
@@ -76,6 +77,14 @@ export const commentsValidation = [
   .isLength({min: 20, max: 300 })
   .withMessage("content has incorrect values"),
 ];
+
+export const likeStatusValidation = [
+  body("likeStatus")
+  .isString()
+  .trim()
+  .isIn(enumValues)
+  .withMessage("Invalid value")
+]
 
 export const authCheckValidation = [
   body("loginOrEmail")

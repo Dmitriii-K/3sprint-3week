@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {ComId} from "../input-output-types/eny-type";
-import { CommentInputModel, CommentViewModel } from "../input-output-types/comments-type";
+import { CommentInputModel, CommentViewModel, likeStatus } from "../input-output-types/comments-type";
 import { CommentQueryRepository } from "./commentQueryRepositiry";
 import { CommentService } from "./commentService";
 
@@ -36,6 +36,20 @@ export class CommentsController {
         } catch (error) {
             console.log(error);
             res.sendStatus(505)
+        }
+    }
+    static likeStatus = async (req: Request<ComId, {}, likeStatus>, res: Response) => {
+        try {
+            const comment = await CommentQueryRepository.findCommentById(req.params.id);
+            if(!comment) {
+                res.sendStatus(404);
+                return;
+            };
+            const likeStatus = CommentService.likeStatus(req.body);
+            if(likeStatus) res.sendStatus(204)
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(505);
         }
     }
     static deleteComment = async (req: Request, res: Response) => {

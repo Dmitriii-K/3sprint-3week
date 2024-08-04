@@ -28,10 +28,10 @@ generateToken (user: WithId<UserDBModel>, deviceId?: string) {
     deviceId:deviceId ?? randomUUID()
   };
   const optionsAccessToken = {
-    expiresIn: '10s' 
+    expiresIn: '400s' 
   };
   const optionsRefreshToken = {
-    expiresIn: '20s' 
+    expiresIn: '600s' 
   };
   const secretKey = SETTINGS.JWT_SECRET_KEY; 
   const accessToken:string = jwt.sign(payload, secretKey, optionsAccessToken);

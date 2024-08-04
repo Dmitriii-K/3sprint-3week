@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 // import { ObjectId } from 'mongodb'
 import { BlogDbType } from '../input-output-types/blogs-type'
 import { PostDbType } from '../input-output-types/posts-type'
-import { CommentatorInfo, CommentDBType } from '../input-output-types/comments-type'
+import { CommentatorInfo, CommentDBType, LikesInfo, likeStatus } from '../input-output-types/comments-type'
 import { EmailConfirmationType, UserDBModel } from '../input-output-types/users-type'
 import { ApiInfoType } from '../input-output-types/eny-type'
 import { SessionsType } from '../input-output-types/sessions-types'
@@ -32,11 +32,16 @@ const commentatorInfoSchema = new mongoose.Schema<CommentatorInfo>({
     userId: { type: String, required: true },
     userLogin: { type: String, required: true }
 }, { _id: false });
+// const likesInfo = new mongoose.Schema<LikesInfo>({
+//     likesCount: { type: Number, required: true },
+//     dislikesCount: { type: Number, required: true },
+//     myStatus: { type: likeStatus[], required: true }
+// }, { _id: false });
 export const CommentSchema = new mongoose.Schema<CommentDBType>({
     postId: { type: String, require: true },
     content: { type: String, require: true },
     createdAt: { type: String, require: true },
-    commentatorInfo: { type: commentatorInfoSchema, require: true }
+    commentatorInfo: { type: commentatorInfoSchema, require: true },
 })
 export const CommentModel = mongoose.model<CommentDBType>('comments', CommentSchema)
 

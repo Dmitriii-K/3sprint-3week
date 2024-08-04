@@ -9,11 +9,18 @@ export type CommentatorInfo = {
   userLogin:	string;
 };
 
+export type LikesInfo = {
+  likesCount: number,
+  dislikesCount: number,
+  myStatus: likeStatus[]
+}
+
 export type CommentViewModel = {
   id:string;
   content:	string;
   createdAt:	string;
   commentatorInfo: CommentatorInfo;
+  likesInfo: LikesInfo
 };
 
 export type CommentDBType = {
@@ -37,3 +44,8 @@ export type TypeCommentPagination = {
   pageNumber: number;
   pageSize: number;
 };
+export enum likeStatus {
+  None = 'None',
+  Like = 'Like',
+  Dislike = 'Dislike'
+}

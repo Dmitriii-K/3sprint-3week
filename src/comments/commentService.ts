@@ -1,3 +1,4 @@
+import { likeStatus } from "../input-output-types/comments-type";
 import { CommetRepository } from "./commentRepository";
 
 export class CommentService {
@@ -16,6 +17,9 @@ export class CommentService {
         } else {
             return false
         }
+    }
+    static async likeStatus (data: likeStatus) {
+        
     }
     static async deleteComment (id: string) {
         const deleteResult = await CommetRepository.deleteComment(id);
