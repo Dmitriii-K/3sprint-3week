@@ -12,7 +12,7 @@ export type CommentatorInfo = {
 export type LikesInfo = {
   likesCount: number,
   dislikesCount: number,
-  myStatus: likeStatus[]
+  myStatus: likeStatus
 }
 
 export type CommentViewModel = {
@@ -29,6 +29,7 @@ export type CommentDBType = {
   content:	string;
   createdAt:	string;
   commentatorInfo: CommentatorInfo;
+  likesInfo: LikesInfo
 }
 
 export type PaginatorCommentViewModelDB = {

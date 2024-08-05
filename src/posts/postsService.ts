@@ -1,5 +1,5 @@
 import { WithId } from "mongodb";
-import { CommentDBType, CommentInputModel } from "../input-output-types/comments-type";
+import { CommentDBType, CommentInputModel, likeStatus } from "../input-output-types/comments-type";
 import { PostDbType, PostInputModel } from "../input-output-types/posts-type";
 import { UserDBModel } from "../input-output-types/users-type";
 import { PostRepository } from "./postsRepository";
@@ -29,6 +29,11 @@ export class PostService {
                 userId:	user._id.toString(),
                 userLogin: user.login,
             },
+            likesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+                myStatus: likeStatus.None
+            }
         };
         return PostRepository.insertComment(newComment)
     }

@@ -32,16 +32,17 @@ const commentatorInfoSchema = new mongoose.Schema<CommentatorInfo>({
     userId: { type: String, required: true },
     userLogin: { type: String, required: true }
 }, { _id: false });
-// const likesInfo = new mongoose.Schema<LikesInfo>({
-//     likesCount: { type: Number, required: true },
-//     dislikesCount: { type: Number, required: true },
-//     myStatus: { type: likeStatus[], required: true }
-// }, { _id: false });
+const likesInfoSchema = new mongoose.Schema<LikesInfo>({
+    likesCount: { type: Number, required: true },
+    dislikesCount: { type: Number, required: true },
+    myStatus: { type: String, enum: likeStatus, required: true, default: likeStatus.None }
+}, { _id: false });
 export const CommentSchema = new mongoose.Schema<CommentDBType>({
     postId: { type: String, require: true },
     content: { type: String, require: true },
     createdAt: { type: String, require: true },
     commentatorInfo: { type: commentatorInfoSchema, require: true },
+    likesInfo: { type: likesInfoSchema, require: true },
 })
 export const CommentModel = mongoose.model<CommentDBType>('comments', CommentSchema)
 
