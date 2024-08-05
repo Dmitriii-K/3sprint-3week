@@ -45,8 +45,10 @@ export class CommentsController {
                 res.sendStatus(404);
                 return;
             };
-            const likeStatus = CommentService.likeStatus(req.body, comment);
-            if(likeStatus) res.sendStatus(204)
+            const result = await CommentService.likeStatus(req.body, comment);
+            if(result) {
+                res.sendStatus(204)
+            }
         } catch (error) {
             console.log(error);
             res.sendStatus(505);

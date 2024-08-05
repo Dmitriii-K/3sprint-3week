@@ -18,6 +18,7 @@ export class CommentQueryRepository {
             content: comment.content,
             createdAt: comment.createdAt,
             commentatorInfo: comment.commentatorInfo,
+            likesInfo: comment.likesInfo
         };
     }
 }
