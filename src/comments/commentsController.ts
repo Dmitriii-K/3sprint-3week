@@ -38,14 +38,15 @@ export class CommentsController {
             res.sendStatus(505)
         }
     }
-    static likeStatus = async (req: Request<ComId, {}, likeStatus>, res: Response) => {
+    static likeStatus = async (req: Request<ComId, {}, { likeStatus: likeStatus }>, res: Response) => {
         try {
             const comment = await CommentQueryRepository.findCommentById(req.params.id);
+            // console.log(comment)//********************
             if(!comment) {
                 res.sendStatus(404);
                 return;
             };
-            const result = await CommentService.likeStatus(req.body, comment);
+            const result = await CommentService.likeStatus(req.user._id, req.body.likeStatus, comment);
             if(result) {
                 res.sendStatus(204)
             }

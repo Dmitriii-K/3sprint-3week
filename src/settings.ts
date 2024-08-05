@@ -29,6 +29,7 @@ export const SETTINGS = {
   API_COLLECTION_NAME: process.env.API_COLLECTION_NAME || "",
   // DEVICES_COLLECTION_NAME: process.env.DEVICES_COLLECTION_NAME || "",
   SESSIONS_COLLECTION_NAME: process.env.SESSIONS_COLLECTION_NAME || "",
+  LIKES_COLLECTION_NAME: process.env.LIKES_COLLECTION_NAME || "",
   // DB_NAME: process.env.DB_NAME || "",
   JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || "",
   // REFRESH_TOKEN: process.env.REFRESH_TOKEN || "",

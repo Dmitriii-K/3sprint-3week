@@ -1,9 +1,7 @@
 import mongoose from 'mongoose'
-// import { WithId } from 'mongodb'
-// import { ObjectId } from 'mongodb'
 import { BlogDbType } from '../input-output-types/blogs-type'
 import { PostDbType } from '../input-output-types/posts-type'
-import { CommentatorInfo, CommentDBType, LikesInfo, likeStatus } from '../input-output-types/comments-type'
+import { CommentatorInfo, CommentDBType, LikesCount, likeStatus, LikesType } from '../input-output-types/comments-type'
 import { EmailConfirmationType, UserDBModel } from '../input-output-types/users-type'
 import { ApiInfoType } from '../input-output-types/eny-type'
 import { SessionsType } from '../input-output-types/sessions-types'
@@ -32,19 +30,24 @@ const commentatorInfoSchema = new mongoose.Schema<CommentatorInfo>({
     userId: { type: String, required: true },
     userLogin: { type: String, required: true }
 }, { _id: false });
-const likesInfoSchema = new mongoose.Schema<LikesInfo>({
+const likesCountSchema = new mongoose.Schema<LikesCount>({
     likesCount: { type: Number, required: true },
-    dislikesCount: { type: Number, required: true },
-    myStatus: { type: String, enum: likeStatus, required: true, default: likeStatus.None }
+    dislikesCount: { type: Number, required: true }
 }, { _id: false });
 export const CommentSchema = new mongoose.Schema<CommentDBType>({
-    postId: { type: String, require: true },
-    content: { type: String, require: true },
-    createdAt: { type: String, require: true },
-    commentatorInfo: { type: commentatorInfoSchema, require: true },
-    likesInfo: { type: likesInfoSchema, require: true },
+    postId: { type: String, required: true },
+    content: { type: String, required: true },
+    createdAt: { type: String, required: true },
+    commentatorInfo: { type: commentatorInfoSchema, required: true },
+    likesInfo: { type: likesCountSchema, required: true },
 })
 export const CommentModel = mongoose.model<CommentDBType>('comments', CommentSchema)
+
+export const LikesSchema = new mongoose.Schema<LikesType>({
+    userId: {type: String, required: true},
+    myStatus: { type: String, enum: Object.values(likeStatus), required: true, default: likeStatus.None }
+}, { _id: false })
+export const LikesModel = mongoose.model<LikesType>('likes', LikesSchema)
 
 const emailConfirmationSchema = new mongoose.Schema<EmailConfirmationType>({
     confirmationCode: {type: String, required: false},
