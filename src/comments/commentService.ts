@@ -19,11 +19,15 @@ export class CommentService {
         }
     }
     static async likeStatus(userId: string, data: likeStatus, comment: CommentViewModel) {
-        const existLike = await CommetRepository.findLike(userId)
+        const existLike = await CommetRepository.findLike(userId, comment.id)
+        // console.log(userId)//********************
+        // console.log(data)//********************
+        console.log(existLike)//********************
         if(!existLike){
             const newLike: LikesType = {
+                commentId: comment.id,
                 userId: userId,
-                myStatus: data
+                status: data
             }
             if(data === likeStatus.Like){
                 comment.likesInfo.likesCount ++
@@ -31,18 +35,20 @@ export class CommentService {
                 comment.likesInfo.dislikesCount ++
             }
             await CommetRepository.insertLike(newLike)
+            return true
         } else{
-            if (existLike.myStatus !== data) {
+            if (existLike.status !== data) {
                 // Обновление счетчиков лайков и дизлайков
-                if (existLike.myStatus === likeStatus.Like && data === likeStatus.Dislike) {
+                if (existLike.status === likeStatus.Like && data === likeStatus.Dislike) {
                     comment.likesInfo.likesCount--;
                     comment.likesInfo.dislikesCount++;
-                } else if (existLike.myStatus === likeStatus.Dislike && data === likeStatus.Like) {
+                } else if (existLike.status === likeStatus.Dislike && data === likeStatus.Like) {
                     comment.likesInfo.dislikesCount--;
                     comment.likesInfo.likesCount++;
                 }
-                existLike.myStatus = data;
-                await CommetRepository.updateLikeStatus(existLike);
+                existLike.status = data;
+                // console.log(existLike.myStatus)//********************
+                await CommetRepository.updateLikeStatus(userId, existLike.status);
                 return true
             }
         }

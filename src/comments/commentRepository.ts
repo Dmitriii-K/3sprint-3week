@@ -10,18 +10,21 @@ export class CommetRepository {
         return updateComment.modifiedCount === 1
         
     }
-    static async findLike(id: string){
-        const mongoId = new ObjectId(id);
-        return LikesModel.findOne({_id: mongoId});
+    static async findLike(commentId: string, userId: string){
+        const mongoCommentId = new ObjectId(commentId);
+        const mongoUserId = new ObjectId(userId);
+        const like = await LikesModel.findOne({ commentId: mongoCommentId, userId: mongoUserId });
+        return like || null;
     }
     static async insertLike (data: LikesType) {
-        const result = CommentModel.create(data);
+        const result = LikesModel.create(data);
         return (await result)._id.toString()
     }
-    static async updateLikeStatus ( updateStatus : any) {
+    static async updateLikeStatus (id : string, updateStatus : string) {
         // console.log(id) //*************************
-        const updateComment = await CommentModel.create(updateStatus);
-        return (await updateComment)._id.toString()
+        const mongoId = new ObjectId(id);
+        const result = await LikesModel.updateOne({ _id: mongoId },{$set: {updateStatus}});
+        return result.modifiedCount === 1
     }
     static async findUserByComment (id: string) {
         const mongoId = new ObjectId(id);

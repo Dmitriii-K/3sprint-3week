@@ -27,32 +27,33 @@ export const PostSchema = new mongoose.Schema<PostDbType>({
 export const PostModel = mongoose.model<PostDbType>('posts', PostSchema)
 
 const commentatorInfoSchema = new mongoose.Schema<CommentatorInfo>({
-    userId: { type: String, required: true },
-    userLogin: { type: String, required: true }
+    userId: { type: String, require: true },
+    userLogin: { type: String, require: true }
 }, { _id: false });
 const likesCountSchema = new mongoose.Schema<LikesCount>({
-    likesCount: { type: Number, required: true },
-    dislikesCount: { type: Number, required: true }
+    likesCount: { type: Number, require: true },
+    dislikesCount: { type: Number, require: true }
 }, { _id: false });
 export const CommentSchema = new mongoose.Schema<CommentDBType>({
-    postId: { type: String, required: true },
-    content: { type: String, required: true },
-    createdAt: { type: String, required: true },
-    commentatorInfo: { type: commentatorInfoSchema, required: true },
-    likesInfo: { type: likesCountSchema, required: true },
+    postId: { type: String, require: true },
+    content: { type: String, require: true },
+    createdAt: { type: String, require: true },
+    commentatorInfo: { type: commentatorInfoSchema, require: true },
+    likesInfo: { type: likesCountSchema, require: true },
 })
 export const CommentModel = mongoose.model<CommentDBType>('comments', CommentSchema)
 
 export const LikesSchema = new mongoose.Schema<LikesType>({
-    userId: {type: String, required: true},
-    myStatus: { type: String, enum: Object.values(likeStatus), required: true, default: likeStatus.None }
-}, { _id: false })
+    commentId: {type: String, require: true},
+    userId: {type: String, require: true},
+    status: { type: String, enum: Object.values(likeStatus), require: true, default: likeStatus.None }
+})
 export const LikesModel = mongoose.model<LikesType>('likes', LikesSchema)
 
 const emailConfirmationSchema = new mongoose.Schema<EmailConfirmationType>({
-    confirmationCode: {type: String, required: false},
-    expirationDate: {type: String, required: false},
-    isConfirmed: {type: Boolean, required: true}
+    confirmationCode: {type: String, require: false},
+    expirationDate: {type: String, require: false},
+    isConfirmed: {type: Boolean, require: true}
 }, { _id: false });
 export const UserSchema = new mongoose.Schema<UserDBModel>({
     login: { type: String, require: true },

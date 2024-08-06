@@ -1,5 +1,5 @@
 import { ObjectId, WithId } from "mongodb";
-import { CommentDBType, CommentViewModel, PaginatorCommentViewModelDB } from "../input-output-types/comments-type";
+import { CommentDBType, CommentViewModel, likeStatus, PaginatorCommentViewModelDB } from "../input-output-types/comments-type";
 import { PaginatorPostViewModel, PostDbType, PostViewModel, TypePostHalper } from "../input-output-types/posts-type";
 // import { commentCollection, postCollection } from "../db/mongo-db";
 import { halper, commentsPagination } from "../middlewares/middlewareForAll";
@@ -75,7 +75,11 @@ export class PostQueryRepository {
             content: comment.content,
             createdAt: comment.createdAt,
             commentatorInfo: comment.commentatorInfo,
-            likesInfo: comment.likesInfo
+            likesInfo: {
+                likesCount: comment.likesInfo.likesCount,
+                dislikesCount: comment.likesInfo.dislikesCount,
+                myStatus: likeStatus.None
+            }
         };
     }
 }

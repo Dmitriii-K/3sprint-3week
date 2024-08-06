@@ -31,8 +31,7 @@ export class PostService {
             },
             likesInfo: {
                 likesCount: 0,
-                dislikesCount: 0,
-                myStatus: likeStatus.None
+                dislikesCount: 0
             }
         };
         return PostRepository.insertComment(newComment)
