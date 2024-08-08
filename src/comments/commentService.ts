@@ -22,7 +22,7 @@ export class CommentService {
         const existLike = await CommetRepository.findLike(userId, comment.id)
         // console.log(userId)//********************
         // console.log(data)//********************
-        console.log(existLike)//********************
+        // console.log(existLike)//********************
         if(!existLike){
             const newLike: LikesType = {
                 commentId: comment.id,

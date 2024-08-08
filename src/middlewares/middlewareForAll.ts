@@ -353,6 +353,22 @@ if(!req.headers.authorization) {
   }
 };
 
+export const checkUser = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    // Обработка случая, когда req.user не определен
+    req.user = null;
+    return next();
+  }
+
+  const user = await UserQueryRepository.findUserByMiddleware(req.user._id);
+  if (user) {
+    req.user = user;
+  } else {
+    req.user = null;
+  }
+  next();
+};
+
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
   if(!req.cookies.refreshToken) {
     // console.log(req.cookies)

@@ -7,13 +7,8 @@ import { CommentService } from "./commentService";
 export class CommentsController {
     static getComment = async (req: Request, res: Response<CommentViewModel>) => {
         try {
-            console.log(req.user._id)//********************
-            // Проверка наличия req.user
-        if (!req.user) {
-            console.error('User is not authenticated');
-            return res.sendStatus(401); // Unauthorized
-        }
-        const comment = await CommentQueryRepository.findCommentById(req.params.id, req.user._id);
+        const userId = req.user ? req.user._id : null;
+        const comment = await CommentQueryRepository.findCommentById(req.params.id, userId);
         if(comment) {
             return res.status(200).json(comment)
         };
@@ -46,13 +41,14 @@ export class CommentsController {
     }
     static likeStatus = async (req: Request<ComId, {}, { likeStatus: likeStatus }>, res: Response) => {
         try {
-            const comment = await CommentQueryRepository.findCommentById(req.params.id, req.user._id);
+            const userId = req.user ? req.user._id : null;
+            const comment = await CommentQueryRepository.findCommentById(req.params.id, userId);
             // console.log(comment)//********************
             if(!comment) {
                 res.sendStatus(404);
                 return;
             };
-            const result = await CommentService.likeStatus(req.user._id, req.body.likeStatus, comment);
+            const result = await CommentService.likeStatus(userId, req.body.likeStatus, comment);
             if(result) {
                 res.sendStatus(204)
             }

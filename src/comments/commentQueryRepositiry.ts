@@ -6,8 +6,8 @@ import { CommetRepository } from "./commentRepository";
 
 export class CommentQueryRepository {
     static async findCommentById (id: string, userId: string) {
-        console.log(userId)//********************
-        console.log(id)//********************
+        // console.log(userId)//********************
+        // console.log(id)//********************
         const mongoId = new ObjectId(id);
         const comment = await CommentModel.findOne({_id: mongoId});
         if (!comment) {
