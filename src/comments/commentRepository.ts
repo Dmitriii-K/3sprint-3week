@@ -23,8 +23,15 @@ export class CommetRepository {
     static async updateLikeStatus (id : string, updateStatus : string) {
         // console.log(id) //*************************
         const mongoId = new ObjectId(id);
-        const result = await LikesModel.updateOne({ _id: mongoId },{$set: {updateStatus}});
+        const result = await LikesModel.updateOne({ commentId: mongoId },{$set: { status: updateStatus }});
         return result.modifiedCount === 1
+    }
+    static async updateLikesInfo(commentId: string, likesCount: number, dislikesCount: number) {
+        const mongoCommentId = new ObjectId(commentId);
+        await CommentModel.updateOne(
+            { _id: mongoCommentId },
+            { $set: { 'likesInfo.likesCount': likesCount, 'likesInfo.dislikesCount': dislikesCount } }
+        );
     }
     static async findUserByComment (id: string) {
         const mongoId = new ObjectId(id);

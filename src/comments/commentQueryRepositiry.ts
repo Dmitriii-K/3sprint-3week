@@ -5,15 +5,19 @@ import { CommentModel } from "../db/schema-model-db";
 import { CommetRepository } from "./commentRepository";
 
 export class CommentQueryRepository {
-    static async findCommentById (id: string, userId: string) {
+    static async findCommentById (commentId: string , userId: string | null) {
         // console.log(userId)//********************
         // console.log(id)//********************
-        const mongoId = new ObjectId(id);
-        const comment = await CommentModel.findOne({_id: mongoId});
+        const mongoCommentId = new ObjectId(commentId);
+        const comment = await CommentModel.findOne({_id: mongoCommentId});
         if (!comment) {
             return null;
         };
-        const like = await CommetRepository.findLike(id, userId);
+        let like 
+        if(userId){
+            like = await CommetRepository.findLike(commentId , userId);
+        } 
+        // console.log(like)//********************
         const userLikeStatus = like ? like.status : likeStatus.None;
         return CommentQueryRepository.mapComment(comment, userLikeStatus);
     }

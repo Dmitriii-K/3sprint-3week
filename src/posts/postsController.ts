@@ -73,7 +73,8 @@ export class PostController {
     }
     static getCommentByPost = async (req:Request<PstId, {},{},TypePostHalper>, res:Response<PaginatorCommentViewModelDB>) => {
         try {
-            const comments = await PostQueryRepository.findCommentByPost(req.query, req.params.id)
+            const userId : string | null = req.user ? req.user._id.toString() : null;
+            const comments = await PostQueryRepository.findCommentByPost(req.query, req.params.id, userId)
             if(comments.items.length < 1) {
                 res.sendStatus(404)
                 return

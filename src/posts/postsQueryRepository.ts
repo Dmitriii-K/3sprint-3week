@@ -4,6 +4,8 @@ import { PaginatorPostViewModel, PostDbType, PostViewModel, TypePostHalper } fro
 // import { commentCollection, postCollection } from "../db/mongo-db";
 import { halper, commentsPagination } from "../middlewares/middlewareForAll";
 import { CommentModel, PostModel } from "../db/schema-model-db";
+import { CommetRepository } from "../comments/commentRepository";
+import { CommentQueryRepository } from "../comments/commentQueryRepositiry";
 
 export class PostQueryRepository {
     static async getAllPosts (helper: TypePostHalper) {
@@ -40,23 +42,35 @@ export class PostQueryRepository {
         };
         return PostQueryRepository.mapComment(comment);
     }
-    static async findCommentByPost (helper: TypePostHalper, id: string) {
+    static async findCommentByPost (helper: TypePostHalper, id: string, userId: string | null) {
         const queryParams = commentsPagination(helper);
-            const items: WithId<CommentDBType>[] = await CommentModel
+            const comments: WithId<CommentDBType>[] = await CommentModel
             .find({ postId: id })
             .sort({ [queryParams.sortBy]: queryParams.sortDirection })
             .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
             .limit(queryParams.pageSize)
             .exec();
+            
             const totalCount = await CommentModel.countDocuments({ postId: id });
-            const comments: PaginatorCommentViewModelDB = {
+
+            const items = await Promise.all(comments.map( async comment => {
+                let like 
+                if(userId){
+                    like = await CommetRepository.findLike(comment._id.toString() , userId);
+                } 
+                const userLikeStatus = like ? like.status : likeStatus.None;
+                return CommentQueryRepository.mapComment(comment, userLikeStatus);
+            })
+            )
+
+            return {
             pagesCount: Math.ceil(totalCount / queryParams.pageSize),
             page: queryParams.pageNumber,
             pageSize: queryParams.pageSize,
             totalCount,
-            items: items.map(PostQueryRepository.mapComment),
+            items,
             };
-            return comments
+            
     }
     static mapPost (post: WithId<PostDbType>): PostViewModel {
         return {
@@ -69,7 +83,7 @@ export class PostQueryRepository {
         createdAt: post.createdAt,
         };
     }
-    static mapComment (comment: WithId<CommentDBType>): CommentViewModel {
+    static mapComment (comment: WithId<CommentDBType>, userLikeStatus?: likeStatus): CommentViewModel {
         return {
             id: comment._id.toString(),
             content: comment.content,
@@ -78,7 +92,7 @@ export class PostQueryRepository {
             likesInfo: {
                 likesCount: comment.likesInfo.likesCount,
                 dislikesCount: comment.likesInfo.dislikesCount,
-                myStatus: likeStatus.None
+                myStatus: userLikeStatus || likeStatus.None
             }
         };
     }

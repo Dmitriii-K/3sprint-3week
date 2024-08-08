@@ -19,7 +19,7 @@ export class CommentService {
         }
     }
     static async likeStatus(userId: string, data: likeStatus, comment: CommentViewModel) {
-        const existLike = await CommetRepository.findLike(userId, comment.id)
+        const existLike = await CommetRepository.findLike(/*,*/ comment.id, userId)
         // console.log(userId)//********************
         // console.log(data)//********************
         // console.log(existLike)//********************
@@ -30,11 +30,12 @@ export class CommentService {
                 status: data
             }
             if(data === likeStatus.Like){
-                comment.likesInfo.likesCount ++
+                comment.likesInfo.likesCount++
             } else if (data === likeStatus.Dislike) {
-                comment.likesInfo.dislikesCount ++
+                comment.likesInfo.dislikesCount++
             }
             await CommetRepository.insertLike(newLike)
+            await CommetRepository.updateLikesInfo(comment.id, comment.likesInfo.likesCount, comment.likesInfo.dislikesCount);
             return true
         } else{
             if (existLike.status !== data) {
@@ -45,10 +46,19 @@ export class CommentService {
                 } else if (existLike.status === likeStatus.Dislike && data === likeStatus.Like) {
                     comment.likesInfo.dislikesCount--;
                     comment.likesInfo.likesCount++;
+                } else if (existLike.status === likeStatus.Like && data === likeStatus.None) {
+                    comment.likesInfo.likesCount--;
+                } else if (existLike.status === likeStatus.Dislike && data === likeStatus.None) {
+                    comment.likesInfo.dislikesCount--;
+                } else if (existLike.status === likeStatus.None && data === likeStatus.Like) {
+                    comment.likesInfo.likesCount++;
+                } else if (existLike.status === likeStatus.None && data === likeStatus.Dislike) {
+                    comment.likesInfo.dislikesCount++;
                 }
                 existLike.status = data;
-                // console.log(existLike.myStatus)//********************
-                await CommetRepository.updateLikeStatus(userId, existLike.status);
+                // console.log(existLike.status)//********************
+                await CommetRepository.updateLikeStatus(/*userId,*/comment.id, existLike.status);
+                await CommetRepository.updateLikesInfo(comment.id, comment.likesInfo.likesCount, comment.likesInfo.dislikesCount);
                 return true
             }
         }

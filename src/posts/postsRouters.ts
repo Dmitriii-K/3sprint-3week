@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { PostController } from "./postsController";
-import { commentsValidation } from "../middlewares/middlewareForAll";
+import { commentsValidation, softBearerAuth } from "../middlewares/middlewareForAll";
 import {
   postInputValidation,
   inputCheckErrorsMiddleware,
@@ -27,5 +27,5 @@ postRouter.put(
   PostController.updatePost
 );
 postRouter.post("/:id/comments", bearerAuth, commentsValidation, inputCheckErrorsMiddleware, PostController.createCommentByPostId);
-postRouter.get("/:id/comments", PostController.getCommentByPost)
+postRouter.get("/:id/comments", softBearerAuth, PostController.getCommentByPost)
 postRouter.delete("/:id", authMiddleware, PostController.deletePost);

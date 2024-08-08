@@ -346,6 +346,7 @@ if(!req.headers.authorization) {
   const user = await UserQueryRepository.findUserByMiddleware(payload.userId)
   if(user) {
     req.user = user;
+    // console.log(req.user)//********************
     next();
     return
   } else {
@@ -353,7 +354,28 @@ if(!req.headers.authorization) {
   }
 };
 
+export const softBearerAuth = async (req: Request<any, any, any, any>, res: Response, next: NextFunction) => {
+  if(!req.headers.authorization) {
+      return next();
+    };
+    const token = req.headers.authorization.split(" ")[1];
+    const payload = jwtService.getUserIdByToken(token);
+    if(!payload) return next();
+  
+    // const user : WithId<UserDBModel> | null= await userCollection.findOne({ _id : new ObjectId(payload.userId)}); 
+    const user = await UserQueryRepository.findUserByMiddleware(payload.userId)
+    if(user) {
+      req.user = user;
+      // console.log(req.user)//********************
+      next();
+      return
+    } else {
+      return next();
+    }
+  };
+
 export const checkUser = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.user)//********************
   if (!req.user) {
     // Обработка случая, когда req.user не определен
     req.user = null;

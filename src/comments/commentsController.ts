@@ -7,8 +7,9 @@ import { CommentService } from "./commentService";
 export class CommentsController {
     static getComment = async (req: Request, res: Response<CommentViewModel>) => {
         try {
-        const userId = req.user ? req.user._id : null;
-        const comment = await CommentQueryRepository.findCommentById(req.params.id, userId);
+        const userId : string | null = req.user ? req.user._id.toString() : null;
+        // console.log(userId)//********************
+        const comment = await CommentQueryRepository.findCommentById(req.params.id , userId);
         if(comment) {
             return res.status(200).json(comment)
         };
@@ -42,7 +43,7 @@ export class CommentsController {
     static likeStatus = async (req: Request<ComId, {}, { likeStatus: likeStatus }>, res: Response) => {
         try {
             const userId = req.user ? req.user._id : null;
-            const comment = await CommentQueryRepository.findCommentById(req.params.id, userId);
+            const comment = await CommentQueryRepository.findCommentById(req.params.id , userId);
             // console.log(comment)//********************
             if(!comment) {
                 res.sendStatus(404);
@@ -51,7 +52,11 @@ export class CommentsController {
             const result = await CommentService.likeStatus(userId, req.body.likeStatus, comment);
             if(result) {
                 res.sendStatus(204)
+                return
             }
+
+            res.sendStatus(204)
+            return
         } catch (error) {
             console.log(error);
             res.sendStatus(505);

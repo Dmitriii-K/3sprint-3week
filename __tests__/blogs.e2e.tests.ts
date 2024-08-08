@@ -1,57 +1,35 @@
-import request from 'supertest';
-const app = require('./app'); // Подразумевается, что Ваше приложение находится в файле app.js
+import { app } from "../src/app";
+import { agent } from "supertest";
+export const req = agent(app);
+
+import mongoose from "mongoose";
+import { SETTINGS } from "./../src/settings";
+import { codedAuth } from "./../src/middlewares/middlewareForAll";
+import { BlogModel} from "./../src/db/schema-model-db";
 
 describe('BlogController', () => {
-it('should create a new blog', async () => {
-    const newBlogData = {
-    name: 'Test Blog',
-    description: 'This is a test blog',
-    websiteUrl: 'http://www.testblog.com'
-    };
 
-    const res = await request(app)
-    .post('/blog')
-    .send(newBlogData);
+    beforeAll(async () => {
+        /* Connecting to the database. */
+        await mongoose.connect(SETTINGS.MONGO_URL)
+    })
+    afterAll(async () => {
+        /* Closing database connection after each test. */
+        await mongoose.connection.close()
+    })
 
-    expect(res.status).toBe(201);
-    expect(res.body.name).toBe(newBlogData.name);
-});
-it('should create a new post for a blog', async () => {
-    // Предположим, что у Вас уже есть блог с ID "12345"
-    const newPostData = {
-    title: 'Test Post',
-    shortDescription: 'This is a test post',
-    content: 'Lorem ipsum dolor sit amet'
-    };
-
-    const res = await request(app)
-    .post('/blog/12345/post')
-    .send(newPostData);
-
-    expect(res.status).toBe(201);
-    expect(res.body.title).toBe(newPostData.title);
-});
-it('should get all blogs', async () => {
-    const res = await request(app)
-    .get('/blogs');
-
-    expect(res.status).toBe(200);
-     // Дополнительные проверки здесь
-});
-});
-
-
-describe('BlogController', () => {
     describe('POST /blogs', () => {
         it('should create a new blog and return 201 status', async () => {
+            await BlogModel.deleteMany({});
             const newBlog = {
                 name: 'Test Blog',
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            const response = await request(app)
-                .post('/blogs')
+            const response = await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newBlog)
                 .expect(201);
 
@@ -61,31 +39,35 @@ describe('BlogController', () => {
             expect(response.body.websiteUrl).toBe(newBlog.websiteUrl);
         });
 
-        it('should return 500 if blog creation fails', async () => {
+        it('should return 400 if blog creation fails', async () => {
             const invalidBlog = {
                 name: '', // Invalid name
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            await request(app)
-                .post('/blogs')
+            await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(invalidBlog)
-                .expect(500);
+                .expect(400);
         });
     });
     describe('POST /blogs/:id/posts', () => {
         it('should create a new post for a blog and return 201 status', async () => {
+            await BlogModel.deleteMany({});
             const newBlog = {
                 name: 'Test Blog',
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            const createBlogResponse = await request(app)
-                .post('/blogs')
+            const createBlogResponse = await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newBlog)
                 .expect(201);
+                const blogId = createBlogResponse.body.id
 
             const newPost = {
                 title: 'Test Post',
@@ -93,8 +75,9 @@ describe('BlogController', () => {
                 content: 'This is the content of the test post'
             };
 
-            const response = await request(app)
-                .post(`/blogs/${createBlogResponse.body.id}/posts`)
+            const response = await req
+                .post(`/blogs/${blogId}/posts`)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newPost)
                 .expect(201);
 
@@ -111,16 +94,17 @@ describe('BlogController', () => {
                 content: 'This is the content of the test post'
             };
 
-            await request(app)
+            await req
                 .post('/blogs/non-existent-id/posts')
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newPost)
                 .expect(404);
         });
     });
     describe('GET /blogs', () => {
         it('should return a list of blogs', async () => {
-            const response = await request(app)
-                .get('/blogs')
+            const response = await req
+                .get(SETTINGS.PATH.BLOGS)
                 .expect(200);
 
             expect(response.body).toHaveProperty('items');
@@ -129,18 +113,20 @@ describe('BlogController', () => {
     });
     describe('GET /blogs/:id', () => {
         it('should return a blog by ID', async () => {
+            await BlogModel.deleteMany({});
             const newBlog = {
                 name: 'Test Blog',
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            const createBlogResponse = await request(app)
-                .post('/blogs')
+            const createBlogResponse = await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newBlog)
                 .expect(201);
 
-            const response = await request(app)
+            const response = await req
                 .get(`/blogs/${createBlogResponse.body.id}`)
                 .expect(200);
 
@@ -151,21 +137,23 @@ describe('BlogController', () => {
         });
 
         it('should return 404 if blog does not exist', async () => {
-            await request(app)
+            await req
                 .get('/blogs/non-existent-id')
                 .expect(404);
         });
     });
     describe('GET /blogs/:id/posts', () => {
         it('should return posts for a blog', async () => {
+            await BlogModel.deleteMany({});
             const newBlog = {
                 name: 'Test Blog',
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            const createBlogResponse = await request(app)
-                .post('/blogs')
+            const createBlogResponse = await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newBlog)
                 .expect(201);
 
@@ -175,12 +163,13 @@ describe('BlogController', () => {
                 content: 'This is the content of the test post'
             };
 
-            await request(app)
+            await req
                 .post(`/blogs/${createBlogResponse.body.id}/posts`)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newPost)
                 .expect(201);
 
-            const response = await request(app)
+            const response = await req
                 .get(`/blogs/${createBlogResponse.body.id}/posts`)
                 .expect(200);
 
@@ -189,32 +178,35 @@ describe('BlogController', () => {
         });
 
         it('should return 404 if blog does not exist', async () => {
-            await request(app)
+            await req
                 .get('/blogs/non-existent-id/posts')
                 .expect(404);
         });
     });
     describe('PUT /blogs/:id', () => {
         it('should update a blog and return 204 status', async () => {
+            await BlogModel.deleteMany({});
             const newBlog = {
                 name: 'Test Blog',
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            const createBlogResponse = await request(app)
-                .post('/blogs')
+            const createBlogResponse = await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newBlog)
                 .expect(201);
 
             const updatedBlog = {
                 name: 'Updated Blog',
                 description: 'This is an updated blog',
-                websiteUrl: 'http://updatedblog.com'
+                websiteUrl: 'https://updatedblog.com'
             };
 
-            await request(app)
+            await req
                 .put(`/blogs/${createBlogResponse.body.id}`)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(updatedBlog)
                 .expect(204);
         });
@@ -223,36 +215,41 @@ describe('BlogController', () => {
             const updatedBlog = {
                 name: 'Updated Blog',
                 description: 'This is an updated blog',
-                websiteUrl: 'http://updatedblog.com'
+                websiteUrl: 'https://updatedblog.com'
             };
 
-            await request(app)
+            await req
                 .put('/blogs/non-existent-id')
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(updatedBlog)
                 .expect(404);
         });
     });
     describe('DELETE /blogs/:id', () => {
         it('should delete a blog and return 204 status', async () => {
+            await BlogModel.deleteMany({});
             const newBlog = {
                 name: 'Test Blog',
                 description: 'This is a test blog',
-                websiteUrl: 'http://testblog.com'
+                websiteUrl: 'https://testblog.com'
             };
 
-            const createBlogResponse = await request(app)
-                .post('/blogs')
+            const createBlogResponse = await req
+                .post(SETTINGS.PATH.BLOGS)
+                .set({ Authorization: "Basic " + codedAuth })
                 .send(newBlog)
                 .expect(201);
 
-            await request(app)
+            await req
                 .delete(`/blogs/${createBlogResponse.body.id}`)
+                .set({ Authorization: "Basic " + codedAuth })
                 .expect(204);
         });
 
         it('should return 404 if blog does not exist', async () => {
-            await request(app)
+            await req
                 .delete('/blogs/non-existent-id')
+                .set({ Authorization: "Basic " + codedAuth })
                 .expect(404);
         });
     });
