@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { PostController } from "./postsController";
-import { commentsValidation, softBearerAuth } from "../middlewares/middlewareForAll";
+import { commentsValidation, likeStatusValidation, softBearerAuth } from "../middlewares/middlewareForAll";
 import {
   postInputValidation,
   inputCheckErrorsMiddleware,
@@ -10,6 +10,7 @@ import {
 
 export const postRouter = Router();
 
+postRouter.put("/:id/like-status", bearerAuth, likeStatusValidation, inputCheckErrorsMiddleware, PostController.updateLikeStatus);
 postRouter.get("/", PostController.getPosts);
 postRouter.post(
   "/",

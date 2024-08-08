@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CommentInputModel, CommentDBType, PaginatorCommentViewModelDB } from "../input-output-types/comments-type";
+import { CommentInputModel, CommentDBType, PaginatorCommentViewModelDB, likeStatus } from "../input-output-types/comments-type";
 import {
     PostInputModel,
     PstId,
@@ -81,6 +81,27 @@ export class PostController {
             } else {
                 res.status(200).json(comments);
                 }
+        } catch (error) {
+            console.log(error);
+            res.sendStatus(505);
+        }
+    }
+    static updateLikeStatus = async (req: Request<PstId, {}, { likeStatus: likeStatus }>, res: Response) => {
+        try {
+            const userId = req.user ? req.user._id : null;
+            const post = await PostRepository.findPostById(req.params.id);
+            // console.log(post)//********************
+            if(!post) {
+                res.sendStatus(404);
+                return;
+            };
+            const result = await PostService.updatePostLike(userId, req.body.likeStatus, post);
+            if(result) {
+                res.sendStatus(204)
+                return
+            }
+            res.sendStatus(204)
+            return
         } catch (error) {
             console.log(error);
             res.sendStatus(505);

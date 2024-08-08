@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { likeStatus } from "./comments-type";
 
 export type PstId = {
   id: string;
@@ -19,16 +20,32 @@ export type PostViewModel = {
   blogId: string;
   blogName: string;
   createdAt: string;
+  extendedLikesInfo: {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: likeStatus
+  },
+  newestLikes: NewestLikesType[]
 };
 
+export type ExtendedLikesInfoType = {
+  likesCount: number;
+  dislikesCount: number;
+}
+export type NewestLikesType = {
+  addedAt: string,
+  userId: string;
+  login: string
+}
 export type PostDbType = {
-  // _id?: ObjectId;
   title: string;
   shortDescription: string;
   content: string;
   blogId: string;
   blogName: string;
   createdAt: string;
+  extendedLikesInfo: ExtendedLikesInfoType,
+  newestLikes: NewestLikesType[]
 };
 
 export type PaginatorPostViewModel = {

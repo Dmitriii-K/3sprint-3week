@@ -9,9 +9,9 @@ export class PostRepository {
         const newId = new ObjectId(id);
         return BlogModel.findOne({ _id: newId });
     }
-    static async findPostById (id: string) {
-        const newId = new ObjectId(id)
-        return PostModel.findOne({_id: newId})
+    static async findPostById (postId: string) {
+        const mongoPostId = new ObjectId(postId)
+        return PostModel.findOne({_id: mongoPostId})
     }
     static async insertPost (data: PostDbType) {
         const result = PostModel.create(data);

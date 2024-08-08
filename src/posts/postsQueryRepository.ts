@@ -72,7 +72,7 @@ export class PostQueryRepository {
             };
             
     }
-    static mapPost (post: WithId<PostDbType>): PostViewModel {
+    static mapPost (post: WithId<PostDbType>, userLikeStatus?: likeStatus): PostViewModel {
         return {
         id: post._id.toString(),
         title: post.title,
@@ -81,6 +81,16 @@ export class PostQueryRepository {
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
+        extendedLikesInfo: {
+            likesCount: post.extendedLikesInfo.likesCount,
+            dislikesCount: post.extendedLikesInfo.dislikesCount,
+            myStatus: userLikeStatus || likeStatus.None
+        }
+        newestLikes: {
+            addedAt: ,
+            userId: ;
+            login: 
+        }
         };
     }
     static mapComment (comment: WithId<CommentDBType>, userLikeStatus?: likeStatus): CommentViewModel {

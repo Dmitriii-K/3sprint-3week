@@ -1,13 +1,12 @@
 import mongoose from 'mongoose'
 import { BlogDbType } from '../input-output-types/blogs-type'
-import { PostDbType } from '../input-output-types/posts-type'
+import { ExtendedLikesInfoType, NewestLikesType, PostDbType } from '../input-output-types/posts-type'
 import { CommentatorInfo, CommentDBType, LikesCount, likeStatus, LikesType } from '../input-output-types/comments-type'
 import { EmailConfirmationType, UserDBModel } from '../input-output-types/users-type'
 import { ApiInfoType } from '../input-output-types/eny-type'
 import { SessionsType } from '../input-output-types/sessions-types'
 
 export const BlogSchema = new mongoose.Schema<BlogDbType>({
-    // _id: { type: String, require: true },
     name: { type: String, require: true },
     description: { type: String, require: true },
     websiteUrl: { type: String, require: true },
@@ -16,13 +15,24 @@ export const BlogSchema = new mongoose.Schema<BlogDbType>({
 })
 export const BlogModel = mongoose.model<BlogDbType>('blogs', BlogSchema)
 
+const extendedLikesInfoSchema = new mongoose.Schema<ExtendedLikesInfoType>({
+    likesCount: { type: Number, require: true },
+    dislikesCount: { type: Number, require: true }
+}, { _id: false })
+const newestLikesSchema = new mongoose.Schema<NewestLikesType>({
+    addedAt: { type: String, require: true },
+    userId: { type: String, require: true },
+    login: { type: String, require: true }
+}, { _id: false })
 export const PostSchema = new mongoose.Schema<PostDbType>({
     title: { type: String, require: true },
     shortDescription: { type: String, require: true },
     content: { type: String, require: true },
     blogId: { type: String, require: true },
     blogName: { type: String, require: true },
-    createdAt: { type: String, require: true }
+    createdAt: { type: String, require: true },
+    extendedLikesInfo: { type: extendedLikesInfoSchema, require: true },
+    newestLikes: {type: [newestLikesSchema], require: true}
 })
 export const PostModel = mongoose.model<PostDbType>('posts', PostSchema)
 

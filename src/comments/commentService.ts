@@ -63,37 +63,6 @@ export class CommentService {
             }
         }
         return false
-        // Обновление статуса лайка и счетчиков
-        // console.log(data) // **************************
-        // const updateStatus: any = {
-        //     $set: {
-        //         'likesInfo.myStatus': data
-        //     },
-        //     $inc: {
-        //         'likesInfo.likesCount': data === likeStatus.Like ? 1 : 0,
-        //         'likesInfo.dislikesCount': data === likeStatus.Dislike ? 1 : 0
-        //     }
-        // };
-        // const updateStatus: any = {
-        //             'likesInfo.likeStatus': data,
-        //             'likesInfo.userId': userId
-        // }
-        // Если статус сбрасывается на None, корректируем счетчики
-        // if (data === likeStatus.None) {
-        //     if (comment.likesInfo.myStatus === likeStatus.Like) {
-        //         updateStatus.$inc['likesInfo.likesCount'] = -1;
-        //     } else if (comment.likesInfo.myStatus === likeStatus.Dislike) {
-        //         updateStatus.$inc['likesInfo.dislikesCount'] = -1;
-        //     }
-        // }
-        // console.log(comment.id) //*************************
-        // console.log(updateStatus) //*************************
-        // const result = await CommetRepository.updateLikeStatus(updateStatus);
-        // if (result) {
-        //     return result;
-        // } else {
-        //     return false;
-        // }
     }
     static async deleteComment (id: string) {
         const deleteResult = await CommetRepository.deleteComment(id);

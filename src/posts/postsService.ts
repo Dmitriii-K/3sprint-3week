@@ -1,6 +1,6 @@
 import { WithId } from "mongodb";
 import { CommentDBType, CommentInputModel, likeStatus } from "../input-output-types/comments-type";
-import { PostDbType, PostInputModel } from "../input-output-types/posts-type";
+import { PostDbType, PostInputModel, PostViewModel } from "../input-output-types/posts-type";
 import { UserDBModel } from "../input-output-types/users-type";
 import { PostRepository } from "./postsRepository";
 
@@ -35,6 +35,9 @@ export class PostService {
             }
         };
         return PostRepository.insertComment(newComment)
+    }
+    static async updatePostLike (userId: string, data: likeStatus, post: PostDbType) {
+
     }
     static async updatePost (data: PostInputModel, id: string) {
         const succsesUpdate = await PostRepository.updatePost(data, id)
