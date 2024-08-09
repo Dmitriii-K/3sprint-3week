@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 // import { blogCollection, commentCollection, postCollection } from "../db/mongo-db";
 import { PostDbType, PostInputModel } from "../input-output-types/posts-type";
 import { CommentDBType } from "../input-output-types/comments-type";
@@ -25,6 +25,11 @@ export class PostRepository {
         const mongoId = new ObjectId(id);
         const result = PostModel.updateOne({_id: mongoId}, {$set: post})
         return (await result).modifiedCount === 1
+    }
+    static async updatePostLikes(post: WithId<PostDbType>) {
+        const mongoId = new ObjectId(post._id);
+        const result = PostModel.updateOne({ _id: mongoId }, { $set: { extendedLikesInfo: post.extendedLikesInfo, newestLikes: post.newestLikes } });
+        return (await result).modifiedCount === 1;
     }
     static async deletePost (id: string) {
         const mongoId = new ObjectId(id);

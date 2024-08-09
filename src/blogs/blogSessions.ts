@@ -24,6 +24,11 @@ export class BlogSessions {
             blogId: blogId,
             blogName: name,
             createdAt: createDate,
+            extendedLikesInfo: {
+                likesCount: 0,
+                dislikesCount: 0,
+            },
+            newestLikes: []
         };
         return BlogRepository.insertPostForBlog(newPost)
     }

@@ -17,7 +17,7 @@ export class PostController {
         res: Response<PostViewModel>
     ) => {
         try {
-            const createResult = await PostService.createPost(req.body, req.body.blogId); // запрос на проверку BlogId  в middleware
+            const createResult = await PostService.createPost(req.body, req.body.blogId, req.user); // запрос на проверку BlogId  в middleware
             if (!createResult) {
                 res.sendStatus(404)
                 return;

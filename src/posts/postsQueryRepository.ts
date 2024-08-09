@@ -6,6 +6,7 @@ import { halper, commentsPagination } from "../middlewares/middlewareForAll";
 import { CommentModel, PostModel } from "../db/schema-model-db";
 import { CommetRepository } from "../comments/commentRepository";
 import { CommentQueryRepository } from "../comments/commentQueryRepositiry";
+import { UserDBModel } from "../input-output-types/users-type";
 
 export class PostQueryRepository {
     static async getAllPosts (helper: TypePostHalper) {
@@ -17,12 +18,16 @@ export class PostQueryRepository {
             .limit(queryParams.pageSize)
             .exec());
         const totalCount = await PostModel.countDocuments({});
+
+        const userLikeStatus = likeStatus.None;
+        const user: WithId<UserDBModel> | undefined = undefined;
+
         const posts: PaginatorPostViewModel = {
             pagesCount: Math.ceil(totalCount / queryParams.pageSize),
             page: queryParams.pageNumber,
             pageSize: queryParams.pageSize,
             totalCount,
-            items: items.map(PostQueryRepository.mapPost),
+            items: items.map(post => PostQueryRepository.mapPost(post, userLikeStatus, user)),
         };
         return posts
     }
@@ -72,7 +77,7 @@ export class PostQueryRepository {
             };
             
     }
-    static mapPost (post: WithId<PostDbType>, userLikeStatus?: likeStatus): PostViewModel {
+    static mapPost (post: WithId<PostDbType>, userLikeStatus?: likeStatus, user?: WithId<UserDBModel>): PostViewModel {
         return {
         id: post._id.toString(),
         title: post.title,
@@ -85,12 +90,8 @@ export class PostQueryRepository {
             likesCount: post.extendedLikesInfo.likesCount,
             dislikesCount: post.extendedLikesInfo.dislikesCount,
             myStatus: userLikeStatus || likeStatus.None
-        }
-        newestLikes: {
-            addedAt: ,
-            userId: ;
-            login: 
-        }
+        },
+        newestLikes: post.newestLikes
         };
     }
     static mapComment (comment: WithId<CommentDBType>, userLikeStatus?: likeStatus): CommentViewModel {

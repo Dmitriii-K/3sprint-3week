@@ -5,6 +5,8 @@ import { BlogModel, PostModel } from "../db/schema-model-db";
 import { PostQueryRepository } from "../posts/postsQueryRepository";
 import { halper } from "../middlewares/middlewareForAll";
 import { PostDbType } from "../input-output-types/posts-type";
+import { UserDBModel } from "../input-output-types/users-type";
+import { likeStatus } from "../input-output-types/comments-type";
 
 export class BlogQueryRepository {
     static async getAllBlogs (helper: TypeBlogHalper) {
@@ -53,12 +55,16 @@ export class BlogQueryRepository {
             .limit(queryParams.pageSize)
             .exec();
         const totalCount = await PostModel.countDocuments({ blogId: id });
+
+        const userLikeStatus = likeStatus.None;
+        const user: WithId<UserDBModel> | undefined = undefined;
+
         const posts = {
             pagesCount: Math.ceil(totalCount / queryParams.pageSize),
             page: queryParams.pageNumber,
             pageSize: queryParams.pageSize,
             totalCount,
-            items: items.map(PostQueryRepository.mapPost),
+            items: items.map(post => PostQueryRepository.mapPost(post, userLikeStatus, user)),
         };
         return posts
     }
