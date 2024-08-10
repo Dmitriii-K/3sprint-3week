@@ -33,11 +33,11 @@ export class PostRepository {
             { $set: { 'extendedLikesInfo.likesCount': likesCount, 'extendedLikesInfo.dislikesCount': dislikesCount } });
         return (await result).modifiedCount === 1;
     }
-    static async updatePostLikes(post: WithId<PostDbType>) {
-        const mongoId = new ObjectId(post._id);
-        const result = PostModel.updateOne({ _id: mongoId }, { $set: { extendedLikesInfo: post.extendedLikesInfo, newestLikes: post.newestLikes } });
-        return (await result).modifiedCount === 1;
-    }
+    // static async updatePostLikes(post: WithId<PostDbType>) {
+    //     const mongoId = new ObjectId(post._id);
+    //     const result = PostModel.updateOne({ _id: mongoId }, { $set: { extendedLikesInfo: post.extendedLikesInfo, newestLikes: post.newestLikes } });
+    //     return (await result).modifiedCount === 1;
+    // }
     static async deletePost (id: string) {
         const mongoId = new ObjectId(id);
         const result = await PostModel.deleteOne({_id: mongoId})

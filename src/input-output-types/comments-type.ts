@@ -54,7 +54,9 @@ export enum likeStatus {
   Dislike = 'Dislike'
 };
 export type LikesType = {
+  addedAt: string;
   commentId: string;
   userId: string;
+  userIogin: string;
   status: likeStatus
 }

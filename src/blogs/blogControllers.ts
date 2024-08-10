@@ -83,7 +83,8 @@ export class BlogController {
         res: Response<PaginatorPostViewModel>
     ) => {
         try {
-            const posts = await BlogQueryRepository.getPostFofBlog(req.query, req.params.id)
+            const userId : string | null = req.user ? req.user._id.toString() : null;
+            const posts = await BlogQueryRepository.getPostFofBlog(req.query, req.params.id, userId)
             if(!posts.items) {
                 res.sendStatus(404)
                 return

@@ -7,7 +7,7 @@ import { UserRepository } from "../users/userRepository";
 import { CommetRepository } from "../comments/commentRepository";
 
 export class PostService {
-    static async createPost (data: PostInputModel, id: string, user: WithId<UserDBModel>) {
+    static async createPost (data: PostInputModel, id: string) {
         const findBlogNameForId = await PostRepository.findBlogNameForId(id)
         const createDate = new Date().toISOString();
         const newPost: PostDbType = {
@@ -20,8 +20,8 @@ export class PostService {
             extendedLikesInfo: {
                 likesCount: 0,
                 dislikesCount: 0,
-            },
-            newestLikes: []
+                newestLikes: []
+            }
         };
         return PostRepository.insertPost(newPost);
     }
@@ -43,15 +43,18 @@ export class PostService {
         };
         return PostRepository.insertComment(newComment)
     }
-    static async updatePostLike(userId: string, data: likeStatus, post: WithId<PostDbType>) {
-        const existLike = await CommetRepository.findLike( post._id.toString(), userId)
+    static async updatePostLike(user: WithId<UserDBModel>, data: likeStatus, post: WithId<PostDbType>) {
+        const existLike = await CommetRepository.findLike( post._id.toString(), user._id.toString())
         // console.log(userId)//********************
         // console.log(data)//********************
         // console.log(existLike)//********************
         if(!existLike){
+            const createDate = new Date().toISOString();
             const newLike: LikesType = {
+                addedAt: createDate,
                 commentId: post._id.toString(),
-                userId: userId,
+                userId: user._id.toString(),
+                userIogin: user.login,
                 status: data
             }
             if(data === likeStatus.Like){

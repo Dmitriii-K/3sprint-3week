@@ -27,8 +27,8 @@ export class BlogSessions {
             extendedLikesInfo: {
                 likesCount: 0,
                 dislikesCount: 0,
-            },
-            newestLikes: []
+                newestLikes: []
+            }
         };
         return BlogRepository.insertPostForBlog(newPost)
     }

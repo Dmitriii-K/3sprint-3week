@@ -10,6 +10,10 @@ export class CommetRepository {
         return updateComment.modifiedCount === 1
         
     }
+    static async findAllLikesForPost(postId: string): Promise<LikesType[]> {
+        const mongoPostId = new ObjectId(postId);
+        return LikesModel.find({ commentId: mongoPostId }).exec();
+    }
     static async findLike(commentId: string, userId: string){
         // console.log(commentId)//********************
         // console.log(userId)//********************

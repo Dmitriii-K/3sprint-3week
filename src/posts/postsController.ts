@@ -17,12 +17,13 @@ export class PostController {
         res: Response<PostViewModel>
     ) => {
         try {
-            const createResult = await PostService.createPost(req.body, req.body.blogId, req.user); // запрос на проверку BlogId  в middleware
+            const userId : string | null = req.user ? req.user._id.toString() : null;
+            const createResult = await PostService.createPost(req.body, req.body.blogId); // запрос на проверку BlogId  в middleware
             if (!createResult) {
                 res.sendStatus(404)
                 return;
             };
-            const newPost = await PostQueryRepository.findPostById(createResult);
+            const newPost = await PostQueryRepository.findPostById(createResult, userId);
             if(newPost)
                 res.status(201).json(newPost);
         } catch (error) {
@@ -51,7 +52,7 @@ export class PostController {
     ) => {
         try{
             const user = req.user ? req.user : null;
-            console.log('User control:', user);//********************
+            // console.log('User control:', user);//********************
         const posts = await PostQueryRepository.getAllPosts(req.query, user)
         res.status(200).json(posts);
         }catch (e) {
@@ -61,7 +62,8 @@ export class PostController {
     }
     static getPostById = async (req: Request, res: Response) => {
         try {
-            const postResult = await PostQueryRepository.findPostById(req.params.id)
+            const userId : string | null = req.user ? req.user._id.toString() : null;
+            const postResult = await PostQueryRepository.findPostById(req.params.id, userId)
             if(postResult) {
                 res.status(200).json(postResult)
             } else {
@@ -76,6 +78,7 @@ export class PostController {
     static getCommentByPost = async (req:Request<PstId, {},{},TypePostHalper>, res:Response<PaginatorCommentViewModelDB>) => {
         try {
             const userId : string | null = req.user ? req.user._id.toString() : null;
+            // console.log('UserId contr:', userId);//********************
             const comments = await PostQueryRepository.findCommentByPost(req.query, req.params.id, userId)
             if(comments.items.length < 1) {
                 res.sendStatus(404)
@@ -90,7 +93,7 @@ export class PostController {
     }
     static updateLikeStatus = async (req: Request<PstId, {}, { likeStatus: likeStatus }>, res: Response) => {
         try {
-            const userId = req.user ? req.user._id : null;
+            const user = req.user ? req.user : null;
             // console.log(userId)//********************
             const post = await PostRepository.findPostById(req.params.id);
             // console.log(post)//********************
@@ -98,7 +101,7 @@ export class PostController {
                 res.sendStatus(404);
                 return;
             };
-            const result = await PostService.updatePostLike(userId, req.body.likeStatus, post);
+            const result = await PostService.updatePostLike(user, req.body.likeStatus, post);
             if(result) {
                 res.sendStatus(204)
                 return

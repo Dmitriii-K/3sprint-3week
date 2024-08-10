@@ -23,14 +23,15 @@ export type PostViewModel = {
   extendedLikesInfo: {
     likesCount: number,
     dislikesCount: number,
-    myStatus: likeStatus
+    myStatus: likeStatus,
+    newestLikes: NewestLikesType[]
   },
-  newestLikes: NewestLikesType[]
 };
 
 export type ExtendedLikesInfoType = {
   likesCount: number;
   dislikesCount: number;
+  newestLikes: NewestLikesType[]
 }
 export type NewestLikesType = {
   addedAt: string,
@@ -45,7 +46,6 @@ export type PostDbType = {
   blogName: string;
   createdAt: string;
   extendedLikesInfo: ExtendedLikesInfoType,
-  newestLikes: NewestLikesType[]
 };
 
 export type PaginatorPostViewModel = {

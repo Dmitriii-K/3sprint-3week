@@ -362,7 +362,6 @@ export const softBearerAuth = async (req: Request<any, any, any, any>, res: Resp
     const payload = jwtService.getUserIdByToken(token);
     if(!payload) return next();
   
-    // const user : WithId<UserDBModel> | null= await userCollection.findOne({ _id : new ObjectId(payload.userId)}); 
     const user = await UserQueryRepository.findUserByMiddleware(payload.userId)
     if(user) {
       req.user = user;
@@ -373,23 +372,6 @@ export const softBearerAuth = async (req: Request<any, any, any, any>, res: Resp
       return next();
     }
   };
-
-export const checkUser = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.user)//********************
-  if (!req.user) {
-    // Обработка случая, когда req.user не определен
-    req.user = null;
-    return next();
-  }
-
-  const user = await UserQueryRepository.findUserByMiddleware(req.user._id);
-  if (user) {
-    req.user = user;
-  } else {
-    req.user = null;
-  }
-  next();
-};
 
 export const checkRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
   if(!req.cookies.refreshToken) {

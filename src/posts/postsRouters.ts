@@ -14,12 +14,13 @@ postRouter.put("/:id/like-status", bearerAuth, likeStatusValidation, inputCheckE
 postRouter.get("/", softBearerAuth, PostController.getPosts);
 postRouter.post(
   "/",
+  softBearerAuth,
   authMiddleware,
   postInputValidation,
   inputCheckErrorsMiddleware,
   PostController.createPost
 );
-postRouter.get("/:id", PostController.getPostById);
+postRouter.get("/:id", softBearerAuth, PostController.getPostById);
 postRouter.put(
   "/:id",
   authMiddleware,

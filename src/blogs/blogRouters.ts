@@ -5,12 +5,13 @@ import {
   blogInputValidation,
   blogPostValidation,
   inputCheckErrorsMiddleware,
+  softBearerAuth,
 } from "../middlewares/middlewareForAll";
 
 export const blogRouter = Router();
 
 blogRouter.get("/", BlogController.getAllBlogs);
-blogRouter.get("/:id/posts", BlogController.getPostForBlog);
+blogRouter.get("/:id/posts", softBearerAuth, BlogController.getPostForBlog);
 blogRouter.post(
   "/",
   authMiddleware,

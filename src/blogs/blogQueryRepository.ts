@@ -7,6 +7,7 @@ import { halper } from "../middlewares/middlewareForAll";
 import { PostDbType } from "../input-output-types/posts-type";
 import { UserDBModel } from "../input-output-types/users-type";
 import { likeStatus } from "../input-output-types/comments-type";
+import { CommetRepository } from "../comments/commentRepository";
 
 export class BlogQueryRepository {
     static async getAllBlogs (helper: TypeBlogHalper) {
@@ -46,9 +47,9 @@ export class BlogQueryRepository {
         };
         return PostQueryRepository.mapPost(post)
     }
-    static async getPostFofBlog (helper: TypePostForBlogHalper, id: string) {
+    static async getPostFofBlog (helper: TypePostForBlogHalper, id: string, userId: string | null) {
         const queryParams = halper(helper);
-        const items: WithId<PostDbType>[] = await PostModel
+        const posts: WithId<PostDbType>[] = await PostModel
             .find({ blogId: id })
             .sort({ [queryParams.sortBy]: queryParams.sortDirection })
             .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
@@ -56,17 +57,27 @@ export class BlogQueryRepository {
             .exec();
         const totalCount = await PostModel.countDocuments({ blogId: id });
 
-        const userLikeStatus = likeStatus.None;
-        const user: WithId<UserDBModel> | undefined = undefined;
+        const items = await Promise.all(posts.map( async post => {
+            // console.log('Comment ID:', comment._id);//********************
+            let like 
+            if(userId){
+                // console.log('UserId repo:', userId);//********************
+                like = await CommetRepository.findLike(post._id.toString() , userId);
+                // console.log('Like status:', like);//********************
+            } 
+            const allLikes = await CommetRepository.findAllLikesForPost(post._id.toString());
+            const userLikeStatus = like ? like.status : likeStatus.None;
+            return PostQueryRepository.mapPost(post, userLikeStatus, allLikes);
+        })
+        )
 
-        const posts = {
+        return {
             pagesCount: Math.ceil(totalCount / queryParams.pageSize),
             page: queryParams.pageNumber,
             pageSize: queryParams.pageSize,
             totalCount,
-            items: items.map(post => PostQueryRepository.mapPost(post, userLikeStatus, user)),
-        };
-        return posts
+            items,
+            };
     }
     static blogMap (blog: WithId<BlogDbType>): BlogViewModel {
         return {

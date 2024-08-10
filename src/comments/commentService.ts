@@ -1,4 +1,6 @@
+import { WithId } from "mongodb";
 import { CommentViewModel, LikesType, likeStatus } from "../input-output-types/comments-type";
+import { UserDBModel } from "../input-output-types/users-type";
 import { CommetRepository } from "./commentRepository";
 
 export class CommentService {
@@ -18,15 +20,18 @@ export class CommentService {
             return false
         }
     }
-    static async likeStatus(userId: string, data: likeStatus, comment: CommentViewModel) {
-        const existLike = await CommetRepository.findLike(/*,*/ comment.id, userId)
+    static async likeStatus(user: WithId<UserDBModel>, data: likeStatus, comment: CommentViewModel) {
+        const existLike = await CommetRepository.findLike(comment.id, user._id.toString())
         // console.log(userId)//********************
         // console.log(data)//********************
         // console.log(existLike)//********************
         if(!existLike){
+            const createDate = new Date().toISOString();
             const newLike: LikesType = {
+                addedAt: createDate,
                 commentId: comment.id,
-                userId: userId,
+                userId: user._id.toString(),
+                userIogin: user.login,
                 status: data
             }
             if(data === likeStatus.Like){
