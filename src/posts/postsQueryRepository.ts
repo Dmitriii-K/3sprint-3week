@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from "mongodb";
 import { CommentDBType, CommentViewModel, likeStatus, PaginatorCommentViewModelDB } from "../input-output-types/comments-type";
-import { PaginatorPostViewModel, PostDbType, PostViewModel, TypePostHalper } from "../input-output-types/posts-type";
+import { NewestLikesType, PaginatorPostViewModel, PostDbType, PostViewModel, TypePostHalper } from "../input-output-types/posts-type";
 // import { commentCollection, postCollection } from "../db/mongo-db";
 import { halper, commentsPagination } from "../middlewares/middlewareForAll";
 import { CommentModel, PostModel } from "../db/schema-model-db";
@@ -9,27 +9,35 @@ import { CommentQueryRepository } from "../comments/commentQueryRepositiry";
 import { UserDBModel } from "../input-output-types/users-type";
 
 export class PostQueryRepository {
-    static async getAllPosts (helper: TypePostHalper) {
+    static async getAllPosts(helper: TypePostHalper, user: WithId<UserDBModel> | null) {
         const queryParams = halper(helper);
-        const items: WithId<PostDbType>[] = (await PostModel
+        const posts: WithId<PostDbType>[] = (await PostModel
             .find({})
             .sort({ [queryParams.sortBy]: queryParams.sortDirection })
             .skip((queryParams.pageNumber - 1) * queryParams.pageSize)
             .limit(queryParams.pageSize)
             .exec());
         const totalCount = await PostModel.countDocuments({});
-
-        const userLikeStatus = likeStatus.None;
-        const user: WithId<UserDBModel> | undefined = undefined;
-
-        const posts: PaginatorPostViewModel = {
+    
+        const items = await Promise.all(posts.map(async post => {
+            console.log('Post ID:', post._id);//********************
+            let like;
+            if (user) {
+                console.log('User repo:', user);//********************
+                like = await CommetRepository.findLike(post._id.toString(), user._id.toString());
+                console.log('Like status:', like);//********************
+            }
+            const userLikeStatus = like ? like.status : likeStatus.None;
+            return PostQueryRepository.mapPost(post, userLikeStatus);
+        }));
+    
+        return {
             pagesCount: Math.ceil(totalCount / queryParams.pageSize),
             page: queryParams.pageNumber,
             pageSize: queryParams.pageSize,
             totalCount,
-            items: items.map(post => PostQueryRepository.mapPost(post, userLikeStatus, user)),
+            items,
         };
-        return posts
     }
     static async findPostById (id: string) {
         const mongoId = new ObjectId(id);
@@ -77,21 +85,23 @@ export class PostQueryRepository {
             };
             
     }
-    static mapPost (post: WithId<PostDbType>, userLikeStatus?: likeStatus, user?: WithId<UserDBModel>): PostViewModel {
+    static mapPost(post: WithId<PostDbType>, userLikeStatus?: likeStatus, user?: WithId<UserDBModel> | null): PostViewModel {
+        const newestLikes: NewestLikesType[] = post.newestLikes || [];
+    
         return {
-        id: post._id.toString(),
-        title: post.title,
-        shortDescription: post.shortDescription,
-        content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt,
-        extendedLikesInfo: {
-            likesCount: post.extendedLikesInfo.likesCount,
-            dislikesCount: post.extendedLikesInfo.dislikesCount,
-            myStatus: userLikeStatus || likeStatus.None
-        },
-        newestLikes: post.newestLikes
+            id: post._id.toString(),
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt,
+            extendedLikesInfo: {
+                likesCount: post.extendedLikesInfo.likesCount,
+                dislikesCount: post.extendedLikesInfo.dislikesCount,
+                myStatus: userLikeStatus || likeStatus.None
+            },
+            newestLikes: newestLikes
         };
     }
     static mapComment (comment: WithId<CommentDBType>, userLikeStatus?: likeStatus): CommentViewModel {

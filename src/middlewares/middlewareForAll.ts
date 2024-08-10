@@ -366,7 +366,7 @@ export const softBearerAuth = async (req: Request<any, any, any, any>, res: Resp
     const user = await UserQueryRepository.findUserByMiddleware(payload.userId)
     if(user) {
       req.user = user;
-      // console.log(req.user)//********************
+      // console.log('req user:', req.user)//********************
       next();
       return
     } else {

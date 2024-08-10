@@ -50,7 +50,9 @@ export class PostController {
         res: Response<PaginatorPostViewModel>
     ) => {
         try{
-        const posts = await PostQueryRepository.getAllPosts(req.query)
+            const user = req.user ? req.user : null;
+            console.log('User control:', user);//********************
+        const posts = await PostQueryRepository.getAllPosts(req.query, user)
         res.status(200).json(posts);
         }catch (e) {
         console.log(e);
@@ -89,6 +91,7 @@ export class PostController {
     static updateLikeStatus = async (req: Request<PstId, {}, { likeStatus: likeStatus }>, res: Response) => {
         try {
             const userId = req.user ? req.user._id : null;
+            // console.log(userId)//********************
             const post = await PostRepository.findPostById(req.params.id);
             // console.log(post)//********************
             if(!post) {

@@ -11,6 +11,8 @@ export class CommetRepository {
         
     }
     static async findLike(commentId: string, userId: string){
+        // console.log(commentId)//********************
+        // console.log(userId)//********************
         const mongoCommentId = new ObjectId(commentId);
         const mongoUserId = new ObjectId(userId);
         const like = await LikesModel.findOne({ commentId: mongoCommentId, userId: mongoUserId });

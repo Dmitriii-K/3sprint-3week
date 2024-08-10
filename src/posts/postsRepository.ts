@@ -26,6 +26,13 @@ export class PostRepository {
         const result = PostModel.updateOne({_id: mongoId}, {$set: post})
         return (await result).modifiedCount === 1
     }
+    static async updatePostCount(postId: string, likesCount: number, dislikesCount: number) {
+        const mongoPostId = new ObjectId(postId);
+        const result = PostModel.updateOne(
+            { _id: mongoPostId },
+            { $set: { 'extendedLikesInfo.likesCount': likesCount, 'extendedLikesInfo.dislikesCount': dislikesCount } });
+        return (await result).modifiedCount === 1;
+    }
     static async updatePostLikes(post: WithId<PostDbType>) {
         const mongoId = new ObjectId(post._id);
         const result = PostModel.updateOne({ _id: mongoId }, { $set: { extendedLikesInfo: post.extendedLikesInfo, newestLikes: post.newestLikes } });

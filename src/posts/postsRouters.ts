@@ -11,7 +11,7 @@ import {
 export const postRouter = Router();
 
 postRouter.put("/:id/like-status", bearerAuth, likeStatusValidation, inputCheckErrorsMiddleware, PostController.updateLikeStatus);
-postRouter.get("/", PostController.getPosts);
+postRouter.get("/", softBearerAuth, PostController.getPosts);
 postRouter.post(
   "/",
   authMiddleware,
